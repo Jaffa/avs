@@ -16,32 +16,16 @@ class Audio(object):
 
         self.pyaudio_instance = pyaudio.PyAudio()
 
-        if device_index is None:
-            if channels:
-                for i in range(self.pyaudio_instance.get_device_count()):
-                    dev = self.pyaudio_instance.get_device_info_by_index(i)
-                    name = dev['name'].encode('utf-8')
-                    logger.info('{}:{} with {} input channels'.format(i, name, dev['maxInputChannels']))
-                    if dev['maxInputChannels'] == channels:
-                        logger.info('Use {}'.format(name))
-                        device_index = i
-                        break
-            else:
-                device_index = self.pyaudio_instance.get_default_input_device_info()['index']
-
-            if device_index is None:
-                raise Exception('Can not find an input device with {} channel(s)'.format(channels))
-
         self.stream = self.pyaudio_instance.open(
             start=False,
             format=pyaudio.paInt16,
-            input_device_index=device_index,
             channels=self.channels,
             rate=int(self.sample_rate),
             frames_per_buffer=int(self.frames_size),
             stream_callback=self._callback,
             input=True
         )
+        logger.debug('Got %s as audio device' % (self.stream))
 
         self.sinks = []
 
