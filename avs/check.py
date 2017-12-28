@@ -16,10 +16,11 @@ from avs.player import Player
 
 class RMS(object):
     def __init__(self):
-        pass
+        self.f = open('audio.bin', 'w')
 
     def put(self, data):
         print('RMS: {}'.format(audioop.rms(data, 2)))
+        self.f.write(data)
 
 
 def main():
